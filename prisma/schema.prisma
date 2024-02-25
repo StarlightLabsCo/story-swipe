@@ -12,3 +12,75 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model World {
+  id String @id @default(cuid())
+
+  name        String
+  description String
+  imageUrl    String
+
+  characters Character[]
+  items      Item[]
+  locations  Location[]
+  events     Events[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Character {
+  id String @id @default(cuid())
+
+  world   World?  @relation(fields: [worldId], references: [id])
+  worldId String?
+
+  name        String
+  description String
+  imageUrl    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Events {
+  id String @id @default(cuid())
+
+  world   World?  @relation(fields: [worldId], references: [id])
+  worldId String?
+
+  name        String
+  description String
+  imageUrl    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id String @id @default(cuid())
+
+  world   World?  @relation(fields: [worldId], references: [id])
+  worldId String?
+
+  name        String
+  description String
+  imageUrl    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Location {
+  id String @id @default(cuid())
+
+  world   World?  @relation(fields: [worldId], references: [id])
+  worldId String?
+
+  name        String
+  description String
+  imageUrl    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
