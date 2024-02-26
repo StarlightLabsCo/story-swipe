@@ -16,66 +16,37 @@ datasource db {
 model World {
   id String @id @default(cuid())
 
-  name        String
-  description String
-  imageUrl    String
+  name        String?
+  description String?
+  imageUrl    String?
 
-  characters Character[]
-  items      Item[]
-  locations  Location[]
-  events     Events[]
+  entities Entity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Character {
-  id String @id @default(cuid())
-
-  world   World?  @relation(fields: [worldId], references: [id])
-  worldId String?
-
-  name        String
-  description String
-  imageUrl    String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum EntityType {
+  CHARACTER
+  ITEM
+  LOCATION
+  EVENT
 }
 
-model Events {
-  id String @id @default(cuid())
-
-  world   World?  @relation(fields: [worldId], references: [id])
-  worldId String?
-
-  name        String
-  description String
-  imageUrl    String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum EntityState {
+  SUGGESTED
+  REJECTED
+  APPROVED
 }
 
-model Item {
+model Entity {
   id String @id @default(cuid())
 
-  world   World?  @relation(fields: [worldId], references: [id])
-  worldId String?
+  type  EntityType
+  state EntityState @default(SUGGESTED)
 
-  name        String
-  description String
-  imageUrl    String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Location {
-  id String @id @default(cuid())
-
-  world   World?  @relation(fields: [worldId], references: [id])
-  worldId String?
+  world   World  @relation(fields: [worldId], references: [id])
+  worldId String
 
   name        String
   description String
