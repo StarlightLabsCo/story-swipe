@@ -1,5 +1,5 @@
 import db from '@/lib/db';
-import { Entity } from '@prisma/client';
+import { Entity, EntityType } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 import OpenAI from 'openai';
@@ -17,11 +17,14 @@ async function createEntities(worldId: string, count: number) {
 }
 
 async function createEntity(worldId: string) {
+  const types = ['CHARACTER', 'ITEM', 'LOCATION', 'EVENT'];
+  const type = types[Math.floor(Math.random() * types.length)];
+
   const response = await openai.chat.completions.create({
     messages: [
       {
         role: 'system',
-        content: `Generate a unique and random entity for a story, ensuring it can belong to any genre or time period. The entity should be described in YAML format and can be a character, item, location, or event, emphasizing its distinctiveness. Example:\n\ntype: CHARACTER\nname: Zaraq El-Amin\ndescription: Zaraq El-Amin is a time-traveling merchant from the distant future, known for trading artifacts that have not yet been invented.`,
+        content: `Generate a unique and random ${type.toLowerCase()} for a story, ensuring it can belong to any genre or time period. The entity must be described in YAML format. Emphasize its distinctiveness. Example:\n\ntype: CHARACTER\nname: Zaraq El-Amin\ndescription: Zaraq El-Amin is a time-traveling merchant from the distant future, known for trading artifacts that have not yet been invented.`,
       },
     ],
     model: 'gpt-4-turbo-preview',
@@ -45,7 +48,14 @@ async function createEntity(worldId: string) {
 
   const imageResponse = await openai.images.generate({
     model: 'dall-e-3',
-    prompt: `Create a depiction of the entity described below. No text. Description: ` + response.choices[0].message.content,
+    prompt:
+      `Create a cinematic depiction of the ${type.toLowerCase()} described below.` +
+      '\n\n' +
+      'name: ' +
+      name +
+      '\n' +
+      'description: ' +
+      description,
     n: 1,
     size: '1024x1792',
     quality: 'hd',

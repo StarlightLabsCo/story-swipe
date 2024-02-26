@@ -22,14 +22,6 @@ export default function EntityCard({ entity, onVote, drag, className, style }: E
   const direction = useRef<string | undefined>();
   const velocity = useRef<number>(0);
 
-  const handleVote = (voteDirection: 'left' | 'right') => {
-    onVote(voteDirection === 'right');
-    setConstrained(false);
-    controls.start({
-      x: voteDirection === 'left' ? -window.innerWidth : window.innerWidth,
-    });
-  };
-
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!drag) return;
@@ -99,6 +91,23 @@ export default function EntityCard({ entity, onVote, drag, className, style }: E
   const truncatedDescription =
     entity.description.split(' ').slice(0, 20).join(' ') + (entity.description.split(' ').length > 22 ? '...' : '');
 
+  const entityTypeToBorderColor = {
+    CHARACTER: 'border-pink-600',
+    ITEM: 'border-orange-500',
+    LOCATION: 'border-purple-500',
+    EVENT: 'border-teal-500',
+  };
+
+  const entityTypeToTagColor = {
+    CHARACTER: 'bg-pink-600 text-white',
+    ITEM: 'bg-orange-500 text-white',
+    LOCATION: 'bg-purple-500 text-white',
+    EVENT: 'bg-teal-500 text-black',
+  };
+
+  const borderStyle = entityTypeToBorderColor[entity.type] || 'border-white';
+  const tagStyle = entityTypeToTagColor[entity.type] || 'bg-white text-black';
+
   return (
     <motion.div
       drag={drag}
@@ -110,9 +119,16 @@ export default function EntityCard({ entity, onVote, drag, className, style }: E
       onDrag={getTrajectory}
       onDragEnd={() => flyAway(350)}
       whileTap={{ scale: 1.1 }}
-      className={cn('absolute top-0 left-0 shrink-0 w-96 h-[42rem] rounded-xl border border-black', { 'drop-shadow-2xl': drag }, className)}
+      className={cn(
+        'absolute top-0 left-0 shrink-0 w-96 h-[42rem] rounded-xl',
+        `border ${borderStyle}`,
+        { 'drop-shadow-2xl': drag },
+        className,
+      )}
     >
-      <div className="absolute top-0 w-1/3 h-6 bg-white rounded-tl-xl rounded-br-xl font-black text-sm flex items-center justify-center">
+      <div
+        className={`absolute top-0 w-1/3 h-6 rounded-tl-xl rounded-br-xl font-black text-sm flex items-center justify-center ${tagStyle}`}
+      >
         {entity.type}
       </div>
       <Image
@@ -125,7 +141,7 @@ export default function EntityCard({ entity, onVote, drag, className, style }: E
       />
       <div className="absolute bottom-0 w-full h-1/4 bg-black/90 rounded-b-xl" />
       <div className="absolute w-full bottom-1/4 h-1/4 bg-gradient-to-t from-black/90 to-transparent" />
-      <div className="absolute bottom-0 z-10 flex flex-col justify-between w-full h-36 p-3 mb-8 gap-y-2">
+      <div className="absolute bottom-0 z-10 flex flex-col justify-between w-full h-36 py-3 px-5 mb-8 gap-y-2">
         <div className="text-3xl font-black text-center drop-shadow-lg text-white">{entity.name}</div>
         <div className="text-sm text-center text-neutral-400">{truncatedDescription}</div>
       </div>

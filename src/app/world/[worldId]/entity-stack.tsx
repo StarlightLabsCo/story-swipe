@@ -3,6 +3,7 @@
 import { Entity } from '@prisma/client';
 import { useState } from 'react';
 import EntityCard from './entity-card';
+import { cn } from '@/lib/utils';
 
 type EntityStackProps = {
   entities: Entity[];
@@ -10,7 +11,7 @@ type EntityStackProps = {
   className?: string;
 };
 
-export function EntityStack({ entities, onVote }: EntityStackProps) {
+export function EntityStack({ entities, onVote, className }: EntityStackProps) {
   const [stack, setStack] = useState<Entity[]>(entities);
 
   const handleVote = (vote: boolean) => {
@@ -25,7 +26,7 @@ export function EntityStack({ entities, onVote }: EntityStackProps) {
   }
 
   return (
-    <div className="w-screen h-screen">
+    <div className={cn('w-screen h-screen bg-gray-950', className)}>
       {stack.map((entity, index) => {
         const isTop = index === stack.length - 1;
         const zIndex = isTop ? stack.length : index;
